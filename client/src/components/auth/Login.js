@@ -1,14 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
-import AuthContext from '../../context/auth/authContext';
 import AlertContext from '../../context/alert/alertContext';
+import { useAuth, clearErrors, login } from '../../context/auth/AuthState';
 
 const Login = (props) => {
 
-  const authContext = useContext(AuthContext);
   const alertContext = useContext(AlertContext);
-
   const { setAlert } = alertContext;
-  const { login, error, clearErrors, isAuthenticated } = authContext;
+
+  const [authState, authDispatch] = useAuth();
+  const { error, isAuthenticated } = authState;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -16,10 +16,9 @@ const Login = (props) => {
     }
     if (error === 'Invalid Credentials') {
       setAlert(error, 'danger');
-      clearErrors();
+      clearErrors(authDispatch);
     }
-    // eslint-disable-next-line
-  }, [error, isAuthenticated, props.history]);
+  }, [error, isAuthenticated, props.history, authDispatch, setAlert]);
 
   const [user, setUser] = useState({
     email: '',
@@ -35,7 +34,7 @@ const Login = (props) => {
     if (email === '' || password === '') {
       setAlert('Please fill in all field', 'danger');
     } else {
-      login({email, password});
+      login(authDispatch, {email, password});
     } 
   }
 

@@ -79,6 +79,7 @@ export default (state, action) => {
         error: action.payload
       }
     default:
-      return state;
+      //return state;
+      throw new Error(`Unsupported type of: ${action.type}`);
   }
 }
